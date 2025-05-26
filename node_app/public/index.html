@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GroundPoint Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>GroundPoint Calculator</h1>
+        <nav>
+            <button id="btnShowCreatePage" class="active">GroundMap 생성</button>
+            <button id="btnShowCalcPage">GroundMap 연산</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="createPage" class="page active-page">
+            <h2>GroundMap 생성, 저장 및 불러오기</h2>
+            <div class="controls-container">
+                <div class="control-group">
+                    <label for="mapNameInput">GroundMap 이름:</label>
+                    <input type="text" id="mapNameInput" placeholder="예: MyFirstMap">
+                </div>
+                <div class="control-group">
+                    <label for="planeWidthInput">Plane 너비 (예: 600):</label>
+                    <input type="number" id="planeWidthInput" value="600" min="10" step="any">
+                </div>
+                <div class="control-group">
+                    <label for="planeHeightInput">Plane 높이 (예: 400):</label>
+                    <input type="number" id="planeHeightInput" value="400" min="10" step="any">
+                </div>
+                <button id="btnCreateNewMap">새 GroundMap 생성/초기화</button>
+            </div>
+
+            <div class="content-container">
+                <div class="input-area">
+                    <h3>점 추가</h3>
+                    <div class="control-group">
+                        <label for="pointNameInput">점 이름:</label>
+                        <input type="text" id="pointNameInput" placeholder="예: P1">
+                    </div>
+                    <div class="control-group">
+                        <label for="pointXInput">X 좌표:</label>
+                        <input type="number" id="pointXInput" value="0" step="any">
+                    </div>
+                    <div class="control-group">
+                        <label for="pointYInput">Y 좌표:</label>
+                        <input type="number" id="pointYInput" value="0" step="any">
+                    </div>
+                    <button id="btnAddPoint">점 추가</button>
+
+                    <h3>저장된 GroundMap 목록 (서버)</h3>
+                    <select id="savedMapsSelectCreate"></select>
+                    <button id="btnLoadSelectedMapCreate">선택한 Map 불러오기 (생성)</button>
+
+                    <hr style="margin: 20px 0;">
+
+                    <h3>외부 JSON 파일 불러오기</h3>
+                    <div class="control-group">
+                        <label for="jsonFileInputCreate">JSON 파일 선택:</label>
+                        <input type="file" id="jsonFileInputCreate" accept=".json">
+                    </div>
+                    <button id="btnLoadExternalJsonCreate">선택한 외부 JSON 파일 불러오기</button>
+                </div>
+
+                <div class="visualization-area">
+                    <h3>GroundMap 시각화 (생성)</h3>
+                    <canvas id="createMapCanvas"></canvas>
+                    <div id="pointListCreate">
+                        <h4>추가된 점 목록:</h4>
+                        <ul></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="btnSaveMap">GroundMap 서버에 저장</button>
+                <button id="btnExportMapFileCreate">JSON 파일로 내보내기</button>
+            </div>
+        </section>
+
+        <section id="calcPage" class="page">
+            <h2>GroundMap 연산</h2>
+            <div class="controls-container">
+                 <div class="control-group">
+                    <h3>저장된 GroundMap 불러오기</h3>
+                    <select id="savedMapsSelectCalc"></select>
+                    <button id="btnLoadMapForCalc">선택한 Map 불러오기 (연산)</button>
+                </div>
+            </div>
+
+            <div class="content-container">
+                <div class="operations-area">
+                    <h3>연산 수행</h3>
+                    <div class="operation-group">
+                        <h4>평행 이동</h4>
+                        <label for="translateX">X 이동량:</label>
+                        <input type="number" id="translateX" value="0" step="any">
+                        <label for="translateY">Y 이동량:</label>
+                        <input type="number" id="translateY" value="0" step="any">
+                        <button id="btnTranslate">평행 이동 적용</button>
+                    </div>
+                    <div class="operation-group">
+                        <h4>회전 이동 (GroundMap 원점 기준, 시계방향)</h4>
+                        <label for="rotateAngle">회전 각도 (도):</label>
+                        <input type="number" id="rotateAngle" value="0" step="any">
+                        <button id="btnRotate">회전 이동 적용</button>
+                    </div>
+                    <div class="operation-group">
+                        <h4>Y=X 대칭 이동 (축 변환)</h4>
+                        <button id="btnReflect">Y=X 대칭 적용</button>
+                    </div>
+                    <hr>
+                    <button id="btnResetOperations">연산 초기화</button>
+                    <button id="btnUndoOperation">마지막 연산 되돌리기</button>
+                </div>
+
+                <div class="visualization-area">
+                    <h3>연산 결과 시각화</h3>
+                    <div style="margin-bottom: 10px;">
+                        <button id="btnZoomInCalc">+</button>
+                        <button id="btnZoomOutCalc">-</button>
+                        <span id="currentZoomLevelCalc" style="margin-left: 10px;"></span>
+                    </div>
+                    <canvas id="calcMapCanvas"></canvas>
+                     <div id="pointListCalc">
+                        <h4>현재 점 목록 (연산 후):</h4>
+                        <ul></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-area">
+                <h3>연산 결과 내보내기</h3>
+                <button id="btnExportJson">JSON으로 내보내기</button>
+                <button id="btnExportCsv">CSV로 내보내기</button>
+            </div>
+
+            <div class="history-area">
+                <h3>연산 기록</h3>
+                <ul id="operationHistory"></ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 GroundPoint Calculator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
